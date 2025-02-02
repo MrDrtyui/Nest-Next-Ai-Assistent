@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int           @id @default(autoincrement())
+  email    String        @unique
+  password String
+  chats    ChatSession[] // Связь с чатами, если нужно будет отображать чаты пользователя
+}
+
+model ChatSession {
+  id       String    @id @default(uuid()) @db.Uuid // Используем UUID для идентификатора сессии
+  userId   Int
+  user     User      @relation(fields: [userId], references: [id])
+  messages Message[] // Связь с сообщениями в этом чате
+
+  createdAt DateTime @default(now()) // Для хранения времени создания чата
+  updatedAt DateTime @updatedAt // Для автоматического обновления времени
+}
+
+model Message {
+  id        String   @id @default(uuid()) @db.Uuid // UUID для сообщений
+  sessionId String   @db.Uuid // Изменен тип на UUID для совместимости с ChatSession
+  sender    String // Кто отправил сообщение
+  content   String // Содержимое сообщения
+  createdAt DateTime @default(now()) // Время создания сообщения
+  updatedAt DateTime @updatedAt // Время последнего обновления сообщения
+
+  session ChatSession @relation(fields: [sessionId], references: [id])
+}

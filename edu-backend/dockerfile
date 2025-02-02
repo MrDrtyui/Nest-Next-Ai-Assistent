@@ -1,0 +1,27 @@
+# Используем официальный образ Node.js как основу
+FROM node:23.4.0
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /backend
+
+# Копируем только package.json и package-lock.json (или yarn.lock)
+COPY package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install --production
+
+# Копируем все остальные файлы проекта
+COPY . .
+
+# Генерируем Prisma только если файл схемы изменился
+RUN npx prisma generate
+
+# Строим проект NestJS
+RUN npm run build
+
+# Экспонируем порт приложения
+EXPOSE 3001
+
+# Запускаем сервер NestJS в режиме production
+CMD ["node", "dist/main"]
+
