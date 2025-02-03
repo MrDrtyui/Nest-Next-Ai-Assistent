@@ -10,7 +10,8 @@ export class AiService {
   constructor() {
     this.openai = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: process.env.OPENROUTER_API_KEY, // Замените на ваш ключ API
+      apiKey:
+        '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', // Замените на ваш ключ API
       defaultHeaders: {
         'HTTP-Referer': process.env.SITE_URL, // Опционально. URL вашего сайта.
         'X-Title': process.env.SITE_NAME, // Опционально. Название вашего сайта.
@@ -20,7 +21,15 @@ export class AiService {
 
   async searchVideo(query: string): Promise<any> {
     try {
+      // Получаем API ключ из переменных окружения
       const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+
+      // Проверяем, что API ключ существует
+      if (!YOUTUBE_API_KEY) {
+        throw new Error('YouTube API key is missing in environment variables.');
+      }
+
+      // Выполняем запрос к YouTube API
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search`,
         {
@@ -29,17 +38,20 @@ export class AiService {
             maxResults: 1,
             q: query,
             key: YOUTUBE_API_KEY,
+            type: 'video', // Указываем, что ищем только видео
           },
         },
       );
 
-      if (response.data.items && response.data.items.length) {
+      // Проверяем, есть ли результаты в ответе
+      if (response.data.items && response.data.items.length > 0) {
         const video = response.data.items[0];
         const videoId = video.id.videoId;
         const videoTitle = video.snippet.title;
         const videoThumbnail = video.snippet.thumbnails.high.url;
         const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
+        // Возвращаем структурированный ответ
         return {
           data: {
             response: `Вот найденное видео: ${videoTitle}`,
@@ -51,11 +63,19 @@ export class AiService {
           },
         };
       } else {
-        return { data: { response: 'Извините, видео не найдено.' } };
+        // Если видео не найдено
+        return {
+          data: {
+            response: 'Извините, видео не найдено.',
+          },
+        };
       }
     } catch (error) {
-      this.logger.error('Ошибка при поиске видео', error);
-      throw new Error('Не удалось найти видео');
+      // Логируем ошибку
+      this.logger.error('Ошибка при поиске видео:', error);
+
+      // Возвращаем понятное сообщение об ошибке
+      throw new Error('Не удалось найти видео. Пожалуйста, попробуйте позже.');
     }
   }
 
@@ -86,7 +106,8 @@ export class AiService {
         messages: [
           {
             role: 'system',
-            content: 'Ты образовательный ассистент. Отвечай четко и по делу.',
+            content:
+              'Ты образовательный ассистент.Ты должен  помогать  студенам. Отвечай четко и по делу.',
           },
           {
             role: 'user',
@@ -95,9 +116,10 @@ export class AiService {
         ],
       });
 
+      console.log(completion);
       return { data: { response: completion.choices[0].message.content } };
     } catch (error) {
-      this.logger.error('Ошибка при получении ответа от модели', error);
+      this.logger.error('Ошибка при получении ответа от модели', error.message);
       return { data: { response: 'Не удалось получить ответ от модели.' } };
     }
   }
