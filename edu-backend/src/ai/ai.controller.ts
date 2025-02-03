@@ -10,6 +10,7 @@ import { AiService } from './ai.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('ai')
+@UseGuards(JwtAuthGuard)
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
