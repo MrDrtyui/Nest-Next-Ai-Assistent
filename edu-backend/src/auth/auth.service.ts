@@ -8,7 +8,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   // Проверка пользователя по email и паролю
   async validateUser(email: string, password: string) {

@@ -17,7 +17,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
-  ) { }
+  ) {}
 
   // Регистрация пользователя
   @Post('register')

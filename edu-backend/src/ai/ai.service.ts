@@ -11,7 +11,7 @@ export class AiService {
     this.openai = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey:
-        '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', // Замените на ваш ключ API
+        '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', // Замените на ваш ключ API
       defaultHeaders: {
         'HTTP-Referer': process.env.SITE_URL, // Опционально. URL вашего сайта.
         'X-Title': process.env.SITE_NAME, // Опционально. Название вашего сайта.
@@ -92,6 +92,7 @@ export class AiService {
       'qwen/qwen-turbo',
       'gpt-3.5-turbo',
       'deepseek/deepseek-r1:free',
+      'sophosympatheia/rogue-rose-103b-v0.2:free',
     ];
 
     if (!availableModels.includes(model)) {

@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma.service';
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   // Поиск пользователя по email
   async findOneByEmail(email: string) {

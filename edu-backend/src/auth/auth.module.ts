@@ -12,10 +12,10 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     JwtModule.register({
       secret: 'eto_moi_secret_key_i_mne_poh', // используйте переменные окружения для секретного ключа
-      signOptions: { expiresIn: '60m' }, // время жизни токена
+      signOptions: { expiresIn: '6000m' }, // время жизни токена
     }),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}
